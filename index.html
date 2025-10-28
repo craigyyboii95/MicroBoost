@@ -3,8 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MicroBoost</title>
-  <link rel="stylesheet" href="styles.css" />
+  <title>MicroBoost ⚡</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f0f4f8;
+      text-align: center;
+      padding: 2em;
+      margin: 0;
+    }
+    header h1 {
+      font-size: 2em;
+      margin-bottom: 0.2em;
+    }
+    header p {
+      font-size: 1.1em;
+      color: #555;
+    }
+    #task-box {
+      background: #fff;
+      padding: 1.5em;
+      margin: 2em auto;
+      border-radius: 8px;
+      max-width: 400px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    #task {
+      font-size: 1.2em;
+      margin-bottom: 1em;
+    }
+    button {
+      padding: 0.8em 1.2em;
+      font-size: 1em;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin: 0.3em;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    #support, #saved-tasks, #email-signup {
+      margin-top: 2em;
+      font-size: 0.95em;
+    }
+    #support a, #email-signup a {
+      color: #0077cc;
+      text-decoration: none;
+    }
+    footer {
+      margin-top: 3em;
+      font-size: 0.9em;
+      color: #666;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #fff;
+      margin: 0.5em auto;
+      padding: 0.8em;
+      max-width: 400px;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -16,9 +82,39 @@
     <div id="task-box">
       <p id="task">Click below to get your task!</p>
       <button onclick="generateTask()">Give Me a Task</button>
+      <button onclick="saveTask()">Save Task</button>
     </div>
+
     <div id="support">
       <p>Love this? <a href="https://ko-fi.com/yourname" target="_blank">Support on Ko-fi</a></p>
+    </div>
+
+    <div id="saved-tasks">
+      <h3>Your Saved Tasks</h3>
+      <ul id="saved-list"></ul>
+    </div>
+    <div id="packs">
+  <h3>Explore Themed Packs</h3>
+  <select onchange="showPack(this.value)">
+    <option value="">Choose a pack</option>
+    <option value="confidence">Confidence Boosters</option>
+    <option value="declutter">Declutter Challenge</option>
+    <option value="mood">Mood Reset</option>
+    <option value="detox">Digital Detox</option>
+    <option value="social">Social Spark</option>
+  </select>
+  <ul id="pack-tasks"></ul>
+</div>
+
+    <div id="email-signup">
+      <h3>Get a Daily Task by Email</h3>
+      <!-- Replace with your actual Buttondown or Mailchimp form -->
+      <p><a href="https://buttondown.email/yourname" target="_blank">Subscribe here</a></p>
+    </div>
+
+    <!-- AdSense placeholder -->
+    <div style="margin-top:2em;">
+      <p style="font-size:0.9em; color:#999;">[Ad goes here]</p>
     </div>
   </main>
 
@@ -26,6 +122,104 @@
     <p>© 2025 MicroBoost | Built by Craig</p>
   </footer>
 
-  <script src="script.js"></script>
+  <script>
+    const packs = {
+  confidence: [
+    "Stand tall and smile for 30 seconds.",
+    "Write down 3 things you’re proud of.",
+    "Say something kind to yourself out loud.",
+    "Do one thing you've been avoiding.",
+    "Compliment someone sincerely."
+  ],
+  declutter: [
+    "Delete one unused app.",
+    "Clear one browser tab.",
+    "Organize one folder.",
+    "Throw away one item you don’t need.",
+    "Unsubscribe from one email list."
+  ],
+  mood: [
+    "Take three deep breaths.",
+    "Listen to a favorite song.",
+    "Stretch for 30 seconds.",
+    "Look outside and name 3 things you see.",
+    "Smile at yourself in the mirror."
+  ],
+  detox: [
+    "Put your phone down for 5 minutes.",
+    "Turn off notifications for 1 hour.",
+    "Log out of one social app.",
+    "Read a page from a book.",
+    "Sit quietly for 2 minutes."
+  ],
+  social: [
+    "Message someone you miss.",
+    "Leave a kind comment online.",
+    "Share a helpful tip with a friend.",
+    "Invite someone to chat.",
+    "Send a voice note instead of a text."
+  ]
+};
+
+function showPack(packName) {
+  const list = document.getElementById("pack-tasks");
+  list.innerHTML = "";
+  if (packs[packName]) {
+    packs[packName].forEach(task => {
+      const li = document.createElement("li");
+      li.textContent = task;
+      list.appendChild(li);
+    });
+  }
+}
+    const tasks = [
+      "Drink a glass of water.",
+      "Delete one unused app.",
+      "Send a kind message to someone.",
+      "Stretch for 30 seconds.",
+      "Write down one goal for today.",
+      "Unsubscribe from one email list.",
+      "Clean one item in your room.",
+      "Take three deep breaths.",
+      "Organize one folder on your phone.",
+      "Compliment yourself out loud.",
+      "Stand up and walk around for 2 minutes.",
+      "Close your eyes and smile for 10 seconds.",
+      "Put your phone down and look outside.",
+      "Write a 3-word gratitude note.",
+      "Declutter one browser tab."
+    ];
+
+    function generateTask() {
+      const task = tasks[Math.floor(Math.random() * tasks.length)];
+      document.getElementById("task").textContent = task;
+    }
+
+    function saveTask() {
+      const task = document.getElementById("task").textContent;
+      if (task && task !== "Click below to get your task!") {
+        let saved = JSON.parse(localStorage.getItem("savedTasks") || "[]");
+        if (!saved.includes(task)) {
+          saved.push(task);
+          localStorage.setItem("savedTasks", JSON.stringify(saved));
+          displaySavedTasks();
+        }
+      }
+    }
+
+    function displaySavedTasks() {
+      const saved = JSON.parse(localStorage.getItem("savedTasks") || "[]");
+      const list = document.getElementById("saved-list");
+      list.innerHTML = "";
+      saved.forEach(task => {
+        const li = document.createElement("li");
+        li.textContent = task;
+        list.appendChild(li);
+      });
+    }
+
+    // Load saved tasks on page load
+    window.onload = displaySavedTasks;
+  </script>
 </body>
 </html>
