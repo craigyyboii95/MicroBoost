@@ -8,31 +8,46 @@
   <style>
     body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #fceabb, #f8b500);
-      text-align: center;
-      padding: 2em;
       margin: 0;
+      padding: 0;
+      transition: background 0.5s ease, color 0.5s ease;
+      overflow-x: hidden;
+    }
+    .light-mode {
+      background: linear-gradient(135deg, #fceabb, #f8b500);
       color: #333;
+    }
+    .dark-mode {
+      background: linear-gradient(135deg, #1e1e2f, #3a3a5a);
+      color: #eee;
+    }
+    header {
+      text-align: center;
+      padding: 2em 1em 1em;
     }
     header h1 {
       font-size: 2.5em;
-      margin-bottom: 0.2em;
+      margin: 0;
     }
     header p {
       font-size: 1.2em;
-      color: #444;
+      margin-top: 0.5em;
     }
-    #task-box, #saved-tasks, #packs, #email-signup {
-      background: #fff;
-      padding: 1.5em;
-      margin: 2em auto;
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 1em;
+    }
+    .card {
+      background: rgba(255,255,255,0.9);
       border-radius: 12px;
-      max-width: 500px;
+      padding: 1.5em;
+      margin: 1.5em 0;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
     }
-    #task {
-      font-size: 1.3em;
-      margin-bottom: 1em;
+    .card:hover {
+      transform: scale(1.02);
     }
     button {
       padding: 0.8em 1.2em;
@@ -63,48 +78,56 @@
       background: #f9f9f9;
       margin: 0.5em auto;
       padding: 0.8em;
-      max-width: 400px;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
-    #support, footer {
-      margin-top: 2em;
-      font-size: 0.95em;
-    }
-    #support a, #email-signup a {
-      color: #ff6f61;
-      text-decoration: none;
-      font-weight: 600;
-    }
     footer {
+      text-align: center;
+      padding: 2em;
       font-size: 0.9em;
-      color: #555;
+    }
+    #emoji-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .emoji {
+      position: absolute;
+      font-size: 2em;
+      animation: float 10s linear infinite;
+    }
+    @keyframes float {
+      0% { transform: translateY(100vh); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh); opacity: 0; }
     }
   </style>
 </head>
-<body>
+<body class="light-mode">
+  <div id="emoji-layer"></div>
   <header>
     <h1>MicroBoost ⚡</h1>
     <p>One tiny task. Big impact.</p>
+    <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
   </header>
 
-  <main>
-    <div id="task-box">
+  <div class="container">
+    <div class="card">
       <p id="task">Click below to get your task!</p>
       <button onclick="generateTask()">🎯 Give Me a Task</button>
       <button onclick="saveTask()">💾 Save Task</button>
     </div>
 
-    <div id="support">
-      <p>Love this? <a href="https://ko-fi.com/yourname" target="_blank">Support on Ko-fi</a></p>
-    </div>
-
-    <div id="saved-tasks">
+    <div class="card">
       <h3>💾 Your Saved Tasks</h3>
       <ul id="saved-list"></ul>
     </div>
 
-    <div id="packs">
+    <div class="card">
       <h3>🎒 Explore Themed Packs</h3>
       <select onchange="showPack(this.value)">
         <option value="">Choose a pack</option>
@@ -117,19 +140,17 @@
       <ul id="pack-tasks"></ul>
     </div>
 
-    <div id="email-signup">
+    <div class="card">
       <h3>📬 Get a Daily Task by Email</h3>
       <p><a href="https://buttondown.email/yourname" target="_blank">Subscribe here</a></p>
     </div>
-
-    <div style="margin-top:2em;">
-      <p style="font-size:0.9em; color:#999;">[Ad goes here]</p>
-    </div>
-  </main>
+  </div>
 
   <footer>
     <p>© 2025 MicroBoost | Built by Craig</p>
   </footer>
+
+  <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
 
   <script>
     const tasks = [
@@ -191,6 +212,7 @@
     function generateTask() {
       const task = tasks[Math.floor(Math.random() * tasks.length)];
       document.getElementById("task").textContent = task;
+      document.getElementById("clickSound").play();
     }
 
     function saveTask() {
@@ -221,13 +243,4 @@
       list.innerHTML = "";
       if (packs[packName]) {
         packs[packName].forEach(task => {
-          const li = document.createElement("li");
-          li.textContent = task;
-          list.appendChild(li);
-        });
-      }
-    }
-
-    window.onload = displaySavedTasks;
-  </script>
-</
+          const li = document.createElement
