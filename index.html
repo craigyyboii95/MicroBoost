@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MicroBoost ⚡</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      transition: background 0.5s ease, color 0.5s ease;
+      background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee);
+      background-size: 400% 400%;
+      animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .light-mode { color: #333; }
+    .dark-mode { color: #eee; }
+
+    header {
+      text-align: center;
+      padding: 2em 1em 1em;
+    }
+
+    header h1 {
+      font-size: 2.5em;
+      margin: 0;
+    }
+
+    header p {
+      font-size: 1.2em;
+      margin-top: 0.5em;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      padding: 1em;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.9);
+      border-radius: 12px;
+      padding: 1.5em;
+      margin: 1.5em 0;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.02);
+    }
+
+    .card.confidence { border: 2px solid #ff6f61; }
+    .card.declutter { border: 2px solid #f8b500; }
+    .card.mood { border: 2px solid #a6c1ee; }
+    .card.detox { border: 2px solid #6dd5ed; }
+    .card.social { border: 2px solid #ff9a9e; }
+
+    button {
+      padding: 0.8em 1.2em;
+      font-size: 1em;
+      background: #ff6f61;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 0.3em;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #ff9f80;
+    }
+
+    select {
+      padding: 0.6em;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      margin-top: 1em;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    li {
+      background: #f9f9f9;
+      margin: 0.5em auto;
+      padding: 0.8em;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    footer {
+      text-align: center;
+      padding: 2em;
+      font-size: 0.9em;
+    }
+
+    #emoji-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .emoji {
+      position: absolute;
+      font-size: 2em;
+      animation: float 10s linear infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(100vh); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateY(-10vh); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="light-mode">
+  <div id="emoji-layer"></div>
+  <header>
+    <h1>MicroBoost ⚡</h1>
+    <p>One tiny task. Big impact.</p>
+    <button onclick="toggleDarkMode()">🌙 Toggle Dark Mode</button>
+    <button onclick="toggleSound()">🔈 Toggle Sound</button>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <p id="task">Click below to get your task!</p>
+      <button onclick="generateTask()">🎯 Give Me a Task</button>
+      <button onclick="saveTask()">💾 Save Task</button>
+    </div>
+
+    <div class="card">
+      <h3>💾 Your Saved Tasks</h3>
+      <ul id="saved-list"></ul>
+    </div>
+
+    <div class="card">
+      <h3>🎒 Explore Themed Packs</h3>
+      <select onchange="showPack(this.value)">
+        <option value="">Choose a pack</option>
+        <option value="confidence">💪 Confidence Boosters</option>
+        <option value="declutter">🧹 Declutter Challenge</option>
+        <option value="mood">🌈 Mood Reset</option>
+        <option value="detox">📵 Digital Detox</option>
+        <option value="social">💬 Social Spark</option>
+      </select>
+      <ul id="pack-tasks"></ul>
+    </div>
+
+    <div class="card">
+      <h3>📬 Get a Daily Task by Email</h3>
+      <p><a href="https://buttondown.email/yourname" target="_blank">Subscribe here</a></p>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 MicroBoost | Built by Craig</p>
+  </footer>
+
+  <audio id="clickSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
+
+  <script>
+    const tasks = [
+      "Drink a glass of water.",
+      "Delete one unused app.",
+      "Send a kind message to someone.",
+      "Stretch for 30 seconds.",
+      "Write down one goal for today.",
+      "Unsubscribe from one email list.",
+      "Clean one item in your room.",
+      "Take three deep breaths.",
+      "Organize one folder on your phone.",
+      "Compliment yourself out loud.",
+      "Stand up and walk around for 2 minutes.",
+      "Close your eyes and smile for 10 seconds.",
+      "Put your phone down and look outside.",
+      "Write a 3-word gratitude note.",
+      "Declutter one browser tab."
+    ];
+
+    const packs = {
+      confidence: [
+        "Stand tall and smile for 30 seconds.",
+        "Write down 3 things you’re proud of.",
+        "Say something kind to yourself out loud.",
+        "Do one thing you've been avoiding.",
+        "Compliment someone sincerely."
+      ],
+      declutter: [
+        "Delete one unused app.",
+        "Clear one browser tab.",
+        "Organize one folder.",
+        "Throw away one item you don’t need.",
+        "Unsubscribe from one email list."
+      ],
+      mood: [
+        "Take three deep breaths.",
+        "Listen to a favorite song.",
+        "Stretch for 30 seconds.",
+        "Look outside and name 3 things you see.",
+        "Smile at yourself in the mirror."
+      ],
+      detox: [
+        "Put your phone down for 5 minutes.",
+        "Turn off notifications for 1 hour.",
+        "Log out of one social app.",
+        "Read a page from a book.",
+        "Sit quietly for 2 minutes."
+      ],
+      social: [
+        "Message someone you miss.",
+        "Leave a kind comment online.",
+        "Share a helpful tip with a friend.",
+        "Invite someone to chat.",
+        "Send a voice note instead of a text."
+      ]
+    };
+
+    let soundEnabled = true;
+
+    function toggleSound() {
+      soundEnabled = !soundEnabled;
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+      document.body.classList.toggle("light-mode");
+    }
+
+    function burstEmoji(emoji) {
+      const layer = document.getElementById("emoji-layer");
+      for (let i = 0; i < 10; i++) {
+        const el = document.createElement("div");
+        el.className = "emoji
+
